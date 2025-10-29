@@ -1,9 +1,9 @@
 package ru.ivanov.ecommerceplatformproject.userservice.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.ivanov.ecommerceplatformproject.common.dto.UserDto;
-import ru.ivanov.ecommerceplatformproject.userservice.model.Role;
-import ru.ivanov.ecommerceplatformproject.userservice.model.User;
+import ru.ivanov.ecommerceplatformproject.sharedlibs.dto.UserDto;
+import ru.ivanov.ecommerceplatformproject.userservice.entity.Role;
+import ru.ivanov.ecommerceplatformproject.userservice.entity.User;
 
 
 @Component

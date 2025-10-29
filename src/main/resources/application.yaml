@@ -40,8 +40,27 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       acks: all
 
-jwt:
-  access:
-    secret: 5ba1791dedb87fec844cd4c57bcf5c3afeb0379f4b67347a438bc559b429a52c
-  service:
-    secret: 057f34884f6434c80285a39344a5a47dfd3a571a0ca3e8a65768e76ffc6bb660
+
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+
+#jwt:
+#  access:
+#    secret: 5ba1791dedb87fec844cd4c57bcf5c3afeb0379f4b67347a438bc559b429a52c
+#  service:
+#    secret: 057f34884f6434c80285a39344a5a47dfd3a571a0ca3e8a65768e76ffc6bb660
+
+
+
+#keycloak:
+#  server-url: http://localhost:9090
+#  realm: test-realm
+#  admin:
+#    realm: master
+#    client-id: admin-cli
+#    username: admin
+#    password: admin

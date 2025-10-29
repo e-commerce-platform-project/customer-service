@@ -1,7 +1,7 @@
 package ru.ivanov.ecommerceplatformproject.userservice.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.ivanov.ecommerceplatformproject.userservice.model.Role;
+import ru.ivanov.ecommerceplatformproject.userservice.entity.Role;
 
 import java.util.Optional;
 import java.util.UUID;
