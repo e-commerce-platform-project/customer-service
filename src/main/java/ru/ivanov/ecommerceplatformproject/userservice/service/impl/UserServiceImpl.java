@@ -3,28 +3,24 @@ package ru.ivanov.ecommerceplatformproject.userservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.ivanov.ecommerceplatformproject.common.dto.UserDto;
-import ru.ivanov.ecommerceplatformproject.common.dto.request.UserRegistrationRequest;
-import ru.ivanov.ecommerceplatformproject.common.event.UserCreatedEvent;
-import ru.ivanov.ecommerceplatformproject.common.event.UserDeletedEvent;
+import ru.ivanov.ecommerceplatformproject.sharedlibs.dto.UserDto;
+import ru.ivanov.ecommerceplatformproject.sharedlibs.dto.request.LoginRequest;
 import ru.ivanov.ecommerceplatformproject.userservice.dto.request.UpdateUserRequest;
+import ru.ivanov.ecommerceplatformproject.userservice.dto.request.UserRegistrationRequest;
 import ru.ivanov.ecommerceplatformproject.userservice.exception.UserNotFoundException;
 import ru.ivanov.ecommerceplatformproject.userservice.exception.UsernameIsTakenException;
+import ru.ivanov.ecommerceplatformproject.userservice.keycloak.KeycloakDataMapper;
 import ru.ivanov.ecommerceplatformproject.userservice.mapper.UserMapper;
-import ru.ivanov.ecommerceplatformproject.userservice.model.Role;
-import ru.ivanov.ecommerceplatformproject.userservice.model.User;
+import ru.ivanov.ecommerceplatformproject.userservice.entity.User;
 import ru.ivanov.ecommerceplatformproject.userservice.repository.UserRepository;
-import ru.ivanov.ecommerceplatformproject.userservice.service.RoleService;
 import ru.ivanov.ecommerceplatformproject.userservice.service.UserService;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -36,47 +32,13 @@ public class UserServiceImpl implements UserService {
     @Lazy
     @Autowired
     private UserService self;
+
     private final UserRepository userRepository;
-    private final RoleService roleService;
+//    private final RoleService roleService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    @Override
-    @Transactional
-    public UserDto createUser(UserRegistrationRequest request) {
-        if (existsByUsername(request.email())) {
-            throw new UsernameIsTakenException(EMAIL_IS_ALREADY_TAKEN.formatted(request.email()));
-        }
 
-        Role roleUser = roleService.findByName("ROLE_USER");
-
-        User user = new User(
-                request.email(),
-                passwordEncoder.encode(request.password()),
-                request.firstName(),
-                request.lastName(),
-                List.of(roleUser)
-        );
-
-        User savedUser = userRepository.save(user);
-
-        CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(
-                "user-created-event-topic",
-                null,
-                new UserCreatedEvent(savedUser.getId())
-        );
-
-        future.whenComplete((result, exception) -> {
-            if (exception != null) {
-                System.out.println("Failed to send message " + exception.getMessage());
-            } else {
-                System.out.println("Message sent successfully, " + result.getRecordMetadata().toString());
-            }
-        });
-
-        return userMapper.toDto(savedUser);
-    }
 
     @Override
     @Transactional(readOnly = true)

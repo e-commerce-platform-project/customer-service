@@ -1,4 +1,4 @@
-package ru.ivanov.ecommerceplatformproject.userservice.model;
+package ru.ivanov.ecommerceplatformproject.userservice.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

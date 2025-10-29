@@ -5,7 +5,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ivanov.ecommerceplatformproject.userservice.exception.RoleNotFoundException;
-import ru.ivanov.ecommerceplatformproject.userservice.model.Role;
+import ru.ivanov.ecommerceplatformproject.userservice.entity.Role;
 import ru.ivanov.ecommerceplatformproject.userservice.repository.RoleRepository;
 import ru.ivanov.ecommerceplatformproject.userservice.service.RoleService;
 

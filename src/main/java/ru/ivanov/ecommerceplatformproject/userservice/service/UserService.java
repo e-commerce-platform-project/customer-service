@@ -1,13 +1,17 @@
 package ru.ivanov.ecommerceplatformproject.userservice.service;
 
-import ru.ivanov.ecommerceplatformproject.common.dto.UserDto;
-import ru.ivanov.ecommerceplatformproject.common.dto.request.UserRegistrationRequest;
+import jakarta.validation.Valid;
+import ru.ivanov.ecommerceplatformproject.sharedlibs.dto.UserDto;
+import ru.ivanov.ecommerceplatformproject.sharedlibs.dto.request.LoginRequest;
+import ru.ivanov.ecommerceplatformproject.sharedlibs.dto.response.ApiResponse;
+import ru.ivanov.ecommerceplatformproject.sharedlibs.dto.response.ApiTokenResponse;
 import ru.ivanov.ecommerceplatformproject.userservice.dto.request.UpdateUserRequest;
+import ru.ivanov.ecommerceplatformproject.userservice.dto.request.UserRegistrationRequest;
 
 import java.util.UUID;
 
 public interface UserService {
-    UserDto createUser(UserRegistrationRequest request);
+    ApiResponse createUser(UserRegistrationRequest request);
 
     UserDto verifyCredentials(String username, String password);
 
@@ -16,4 +20,6 @@ public interface UserService {
     UserDto updateUserPatch(UUID userId, UpdateUserRequest request);
 
     void deleteUserById(UUID userId);
+
+    ApiTokenResponse login(LoginRequest request);
 }
