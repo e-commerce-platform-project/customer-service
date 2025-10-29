@@ -1,74 +1,72 @@
 package ru.ivanov.ecommerceplatformproject.userservice.service.impl;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.kafka.support.SendResult;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ivanov.ecommerceplatformproject.sharedlibs.dto.UserDto;
-import ru.ivanov.ecommerceplatformproject.sharedlibs.dto.request.LoginRequest;
+import ru.ivanov.ecommerceplatformproject.sharedlibs.event.UserRegisteredEvent;
 import ru.ivanov.ecommerceplatformproject.userservice.dto.request.UpdateUserRequest;
-import ru.ivanov.ecommerceplatformproject.userservice.dto.request.UserRegistrationRequest;
+import ru.ivanov.ecommerceplatformproject.userservice.entity.User;
 import ru.ivanov.ecommerceplatformproject.userservice.exception.UserNotFoundException;
 import ru.ivanov.ecommerceplatformproject.userservice.exception.UsernameIsTakenException;
-import ru.ivanov.ecommerceplatformproject.userservice.keycloak.KeycloakDataMapper;
 import ru.ivanov.ecommerceplatformproject.userservice.mapper.UserMapper;
-import ru.ivanov.ecommerceplatformproject.userservice.entity.User;
 import ru.ivanov.ecommerceplatformproject.userservice.repository.UserRepository;
 import ru.ivanov.ecommerceplatformproject.userservice.service.UserService;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import static ru.ivanov.ecommerceplatformproject.userservice.util.MessageUtils.*;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Lazy
-    @Autowired
-    private UserService self;
 
-    private final UserRepository userRepository;
-//    private final RoleService roleService;
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
-
+    private final EntityManager entityManager;
+    private final UserRepository userRepository;
 
 
     @Override
-    @Transactional(readOnly = true)
-    public UserDto verifyCredentials(String username, String password) {
-        User user = findUserByUsername(username);
-
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("bad credentials");
+    @Transactional
+    public void createUser(UserRegisteredEvent event) {
+        if (userRepository.existsByEmail(event.email())) {
+            throw new UsernameIsTakenException(""); //todo надо ли
         }
 
-        return userMapper.toDto(user);
+        User user = userMapper.toEntity(event);
+        entityManager.persist(user);
     }
 
+//    @Override
+//    @Transactional(readOnly = true)
+//    public UserDto verifyCredentials(String username, String password) {
+//        User user = findUserByUsername(username);
+//
+//        if (!passwordEncoder.matches(password, user.getPassword())) {
+//            throw new BadCredentialsException("bad credentials");
+//        }
+//
+//        return userMapper.toDto(user);
+//    }
+
     @Override
-    @Transactional(readOnly = true)
     public UserDto getUser(UUID userId) {
-        User user = findUserById(userId);
-        return userMapper.toDto(user);
+        User user = getUserByIdOrThrow(userId);
+//        return userMapper.toDto(user);
+        return null;
     }
 
     @Override
     @Transactional
+    //todo это точно должно быть через keycloak сначала поэтому сейчас это неправильно
     public UserDto updateUserPatch(UUID userId, UpdateUserRequest request) {
-        User user = findUserById(userId);
+        User user = getUserAndLockByIdOrThrow(userId);
 
         if (request.email() != null) {
-            if (existsByUsername(request.email())) {
+            if (userRepository.existsByEmail(request.email())) {
                 throw new UsernameIsTakenException(EMAIL_IS_ALREADY_TAKEN.formatted(request.email()));
             }
-
             user.setEmail(request.email());
         }
 
@@ -80,48 +78,18 @@ public class UserServiceImpl implements UserService {
             user.setLastName(request.lastName());
         }
 
-        if (request.password() != null) {
-            user.setPassword(passwordEncoder.encode(request.password()));
-        }
-
         User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
+//        return userMapper.toDto(savedUser);
+        return null;
     }
 
-
-    @Override
-    @Transactional
-    public void deleteUserById(UUID userId) {
-        User user = findUserById(userId);
-        userRepository.deleteById(userId);
-
-        CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(
-                "user-deleted-event-topic",
-                null,
-                new UserDeletedEvent(userId)
-        );
-
-        future.whenComplete((result, exception) -> {
-            if (exception != null) {
-                System.out.println("Failed to send message " + exception.getMessage());
-            } else {
-                System.out.println("Message sent successfully, " + result.getRecordMetadata().toString());
-            }
-        });
-    }
-
-
-    private User findUserById(UUID userId) {
-        return  userRepository.findUserById(userId)
+    private User getUserByIdOrThrow(UUID userId) {
+        return userRepository.findUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND.formatted(userId)));
     }
 
-    private User findUserByUsername(String email) {
-        return userRepository.findUserByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_WITH_EMAIL.formatted(email)));
-    }
-
-    private boolean existsByUsername(String email) {
-        return userRepository.existsByEmail(email);
+    private User getUserAndLockByIdOrThrow(UUID userId) {
+        return userRepository.getUserAndLockById(userId)
+                .orElseThrow(() -> new UserNotFoundException("user not found"));//todo
     }
 }

@@ -1,0 +1,51 @@
+server:
+  port: 0
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOSTNAME}:${EUREKA}/eureka/
+  instance:
+    prefer-ip-address: true
+
+spring:
+  application:
+    name: user-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5437/user-service-db
+    username: username
+    password: password
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      properties:
+        org.hibernate:
+          envers:
+            autoRegisterListeners: true
+            audit_table_suffix: _history
+            default_schema: user_history
+            store_data_at_delete: true
+            revision_field_name: revision
+            revision_type_field_name: revision_type
+            revision_sequence_name: user_history.revinfo_seq
+          hibernate:
+            default_schema: user
+            show_sql: ${SHOW_SQL:true}
+            format_sql: ${FORMAT_SQL:true}
+            highlight_sql: ${HIGHLIGHT_SQL:true}
+            session.events.log.LOG_QUERIES_SLOWER_THAN_MS: ${SLOW_SQL_QUERY_INDICATOR_MS:1500}
+            hbm2dll:
+              auto:validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: localhost:29092, localhost:39092, localhost:409092
+    consumer:
+      group-id: user-service
+      properties:
+        spring.json.trusted.packages: "ru.ivanov.ecommerceplatformproject.sharedlibs.event"

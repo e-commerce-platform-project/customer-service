@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ivanov.ecommerceplatformproject.userservice.exception.RoleNotFoundException;
 import ru.ivanov.ecommerceplatformproject.userservice.entity.Role;
-import ru.ivanov.ecommerceplatformproject.userservice.repository.RoleRepository;
 import ru.ivanov.ecommerceplatformproject.userservice.service.RoleService;
 
 import static ru.ivanov.ecommerceplatformproject.userservice.util.MessageUtils.ROLE_NOT_FOUND;
