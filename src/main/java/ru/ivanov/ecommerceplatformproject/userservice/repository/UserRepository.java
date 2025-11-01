@@ -9,7 +9,7 @@ import ru.ivanov.ecommerceplatformproject.userservice.entity.User;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<User, UUID>, RevisionRepository<User, UUID, > {
+public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findUserById(UUID id);
 
     boolean existsByEmail(String username);

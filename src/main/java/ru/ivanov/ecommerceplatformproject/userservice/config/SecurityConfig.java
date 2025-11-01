@@ -29,13 +29,15 @@ public class SecurityConfig {
                 .cors(cors -> cors.disable())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users").authenticated() // вызов из другого сервиса
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users/verify-credentials").authenticated() // вызов из другого сервиса
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users").authenticated()// вызов из другого сервиса
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/users").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users").authenticated()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/actuator/health").permitAll()
-                        .anyRequest().denyAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/v1/users").authenticated() // вызов из другого сервиса
+//                        .requestMatchers(HttpMethod.POST, "/api/v1/users/verify-credentials").authenticated() // вызов из другого сервиса
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/users").authenticated()// вызов из другого сервиса
+//                        .requestMatchers(HttpMethod.PATCH, "/api/v1/users").authenticated()
+//                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users").authenticated()
+//                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/actuator/health").permitAll()
+//                        .anyRequest().denyAll()
+                                .requestMatchers("/api/v1/users/verify-code").hasAuthority("ROLE_user-service.role-internal-access")
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

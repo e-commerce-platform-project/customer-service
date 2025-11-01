@@ -15,8 +15,8 @@ public class KafkaConsumer {
     private final UserService userService;
 
     @KafkaListener(topics = {"user-registered-event-topic"})
-    public void handleKeycloakUserCreatedEvent(
-            @Header("eventId") String eventId, //todo а надо ли???
+    public void handleUserRegisteredEvent(
+            @Header("eventId") String eventId, //todo а надо ли??? думаю если делать идемпотентный консьюмер то надо ?
             @Payload UserRegisteredEvent event
     ) {
         userService.createUser(event);
