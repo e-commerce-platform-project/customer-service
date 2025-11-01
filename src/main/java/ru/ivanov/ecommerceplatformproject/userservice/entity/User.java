@@ -9,6 +9,7 @@ import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,8 +54,8 @@ public class User {
     private String passportIssuedBy;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "id")
-    private List<DeliveryAddress> deliveryAddresses;
+    @JoinColumn(name = "user_id")
+    private List<DeliveryAddress> deliveryAddresses = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt = Instant.now();

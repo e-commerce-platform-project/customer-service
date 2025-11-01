@@ -27,7 +27,7 @@ public class UserRestControllerV1 {
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
     public UserDto getUser() {
-        UUID userId = null; //todo получение из токена
+        UUID userId = UUID.fromString("432d382e-836c-41b8-b857-3019956e5d43");
         return userService.getUser(userId);
     }
 
@@ -39,7 +39,6 @@ public class UserRestControllerV1 {
         UUID userId = null; //todo получение из токена
         return userService.updateUserPatch(userId, request);
     }
-
 
     @PostMapping("/me/addresses")
     @ResponseStatus(HttpStatus.OK)

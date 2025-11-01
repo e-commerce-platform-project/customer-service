@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 1234
 
 eureka:
   instance:
@@ -28,25 +28,26 @@ spring:
     hibernate:
       ddl-auto: create-only
     properties:
-      properties:
-        org.hibernate:
-#          envers:
-#            autoRegisterListeners: true
-#            audit_table_suffix: _history
-#            default_schema: user_history
-#            store_data_at_delete: true
-#            revision_field_name: revision
-#            revision_type_field_name: revision_type
-#            revision_sequence_name: user_history.revinfo_seq
-          hibernate:
-#            default_schema: user
-            show_sql: ${SHOW_SQL:true}
-            format_sql: ${FORMAT_SQL:true}
-            highlight_sql: ${HIGHLIGHT_SQL:true}
-            session.events.log.LOG_QUERIES_SLOWER_THAN_MS: ${SLOW_SQL_QUERY_INDICATOR_MS:1500}
-#            hbm2dll:
-#              auto:validate
-#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        #          envers:
+        #            autoRegisterListeners: true
+        #            audit_table_suffix: _history
+        #            default_schema: user_history
+        #            store_data_at_delete: true
+        #            revision_field_name: revision
+        #            revision_type_field_name: revision_type
+        #            revision_sequence_name: user_history.revinfo_seq
+#        hibernate:
+#          #            default_schema: user
+#          show_sql: ${SHOW_SQL:true}
+#          format_sql: ${FORMAT_SQL:true}
+#          highlight_sql: ${HIGHLIGHT_SQL:true}
+#          session.events.log.LOG_QUERIES_SLOWER_THAN_MS: ${SLOW_SQL_QUERY_INDICATOR_MS:1500}
+        format_sql: true
+      #            hbm2dll:
+      #              auto:validate
+    show-sql: true
+  #    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
     bootstrap-servers: localhost:29092, localhost:39092, localhost:49092
