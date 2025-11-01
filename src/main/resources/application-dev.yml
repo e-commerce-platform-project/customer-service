@@ -2,11 +2,12 @@ server:
   port: 0
 
 eureka:
-  client:
-    service-url:
-      defaultZone: http://${EUREKA_HOSTNAME}:${EUREKA}/eureka/
   instance:
     prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOSTNAME:localhost}:${EUREKA_PORT:8761}/eureka/
+
 
 spring:
   application:
@@ -14,7 +15,7 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5437/user-service-db
+    url: jdbc:postgresql://localhost:5433/user-service-db
     username: username
     password: password
 
@@ -25,30 +26,30 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-only
     properties:
       properties:
         org.hibernate:
-          envers:
-            autoRegisterListeners: true
-            audit_table_suffix: _history
-            default_schema: user_history
-            store_data_at_delete: true
-            revision_field_name: revision
-            revision_type_field_name: revision_type
-            revision_sequence_name: user_history.revinfo_seq
+#          envers:
+#            autoRegisterListeners: true
+#            audit_table_suffix: _history
+#            default_schema: user_history
+#            store_data_at_delete: true
+#            revision_field_name: revision
+#            revision_type_field_name: revision_type
+#            revision_sequence_name: user_history.revinfo_seq
           hibernate:
-            default_schema: user
+#            default_schema: user
             show_sql: ${SHOW_SQL:true}
             format_sql: ${FORMAT_SQL:true}
             highlight_sql: ${HIGHLIGHT_SQL:true}
             session.events.log.LOG_QUERIES_SLOWER_THAN_MS: ${SLOW_SQL_QUERY_INDICATOR_MS:1500}
-            hbm2dll:
-              auto:validate
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#            hbm2dll:
+#              auto:validate
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
-    bootstrap-servers: localhost:29092, localhost:39092, localhost:409092
+    bootstrap-servers: localhost:29092, localhost:39092, localhost:49092
     consumer:
       group-id: user-service
       properties:
