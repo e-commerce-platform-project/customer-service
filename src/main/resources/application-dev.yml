@@ -11,18 +11,21 @@ eureka:
 spring:
   application:
     name: user-service
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5437/user-service-db
     username: username
     password: password
+
   liquibase:
-    enabled: true
+    enabled: false
     change-log: classpath:/db/changelog/db.changelog-master.xml
+
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     properties:
       properties:
         org.hibernate:
@@ -43,6 +46,7 @@ spring:
             hbm2dll:
               auto:validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
   kafka:
     bootstrap-servers: localhost:29092, localhost:39092, localhost:409092
     consumer:

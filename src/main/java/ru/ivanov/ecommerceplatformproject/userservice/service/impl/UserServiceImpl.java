@@ -38,18 +38,6 @@ public class UserServiceImpl implements UserService {
         entityManager.persist(user);
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public UserDto verifyCredentials(String username, String password) {
-//        User user = findUserByUsername(username);
-//
-//        if (!passwordEncoder.matches(password, user.getPassword())) {
-//            throw new BadCredentialsException("bad credentials");
-//        }
-//
-//        return userMapper.toDto(user);
-//    }
-
     @Override
     public UserDto getUser(UUID userId) {
         User user = getUserByIdOrThrow(userId);
