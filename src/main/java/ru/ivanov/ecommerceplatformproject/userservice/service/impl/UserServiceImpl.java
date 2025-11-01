@@ -29,20 +29,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void createUser(UserRegisteredEvent event) {
-        if (userRepository.existsByEmail(event.email())) {
-            throw new UsernameIsTakenException(""); //todo надо ли
+    public void addUser(UserRegisteredEvent event) {
+        if (userRepository.existsById(UUID.fromString(event.userId()))) {
+            return;
         }
 
-        User user = userMapper.toEntity(event);
+//        User user = userMapper.toEntity(event);
+        User user = new User(
+                UUID.fromString(event.userId()),
+                event.firstName(),
+                event.lastName(),
+                event.email()
+        );
         entityManager.persist(user);
     }
 
     @Override
     public UserDto getUser(UUID userId) {
         User user = getUserByIdOrThrow(userId);
-//        return userMapper.toDto(user);
-        return null;
+        return userMapper.toDto(user);
     }
 
     @Override
@@ -67,8 +72,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User savedUser = userRepository.save(user);
-//        return userMapper.toDto(savedUser);
-        return null;
+        return userMapper.toDto(savedUser);
     }
 
     private User getUserByIdOrThrow(UUID userId) {
@@ -77,7 +81,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private User getUserAndLockByIdOrThrow(UUID userId) {
-        return userRepository.getUserAndLockById(userId)
+        return userRepository.findUserAndLockById(userId)
                 .orElseThrow(() -> new UserNotFoundException("user not found"));//todo
     }
 }

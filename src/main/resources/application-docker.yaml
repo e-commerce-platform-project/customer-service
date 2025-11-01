@@ -27,11 +27,6 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
 
-jwt:
-  access:
-    secret: 5ba1791dedb87fec844cd4c57bcf5c3afeb0379f4b67347a438bc559b429a52c
-  service:
-    secret: 057f34884f6434c80285a39344a5a47dfd3a571a0ca3e8a65768e76ffc6bb660
 
 management:
   server:

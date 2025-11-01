@@ -1,41 +1,71 @@
 package ru.ivanov.ecommerceplatformproject.userservice.entity;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
-import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
-import ru.ivanov.ecommerceplatformproject.userservice.entity.enums.UserStatus;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+//@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Getter
 @Setter
 @Entity
-@Table(name = "users", schema = "user")
-public class User extends BaseEntity {
+@NoArgsConstructor
+@NamedEntityGraph(
+        name = "UserWithAddresses",
+        attributeNodes = @NamedAttributeNode("deliveryAddresses")
+)
+@Table(name = "users")
+public class User {
 
-    @Size(max = 1024)
-    @Column(name = "email", nullable = false, unique = true, length = 1024)
-    private String email;
+    @Id
+    @Column(name = "id", nullable = false, unique = true)
+    private UUID id;
 
-    @Size(max = 64)
     @Column(name = "first_name", nullable = false, length = 64)
     private String firstName;
 
-    @Size(max = 64)
     @Column(name = "last_name", nullable = false, length = 64)
     private String lastName;
 
-    @OneToOne(optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    @JoinColumn(name = "address_id", nullable = false)
-    private Address address;
+    @Column(name = "email", nullable = false, unique = true, length = 1024)
+    private String email;
 
-    @Column(name = "status", nullable = false)
-    private UserStatus status = UserStatus.UNVERIFIED;
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "passport_series")
+    private String passportSeries;
+
+    @Column(name = "passport_number")
+    private String passportNumber;
+
+    @Column(name = "passport_issue_date")
+    private LocalDate passportIssueDate;
+
+    @Column(name = "passport_issued_by")
+    private String passportIssuedBy;
+
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "id")
+    private List<DeliveryAddress> deliveryAddresses;
+
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt = Instant.now();
+
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt = Instant.now();
+
+    public User(UUID id, String firstName, String lastName, String email) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
 }

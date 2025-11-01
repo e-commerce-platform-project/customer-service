@@ -13,8 +13,8 @@ services:
     depends_on:
       user-service-db:
         condition: service_healthy
-      user-service-redis:
-        condition: service_healthy
+#      user-service-redis:
+#        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_DRIVER: org.postgresql.Driver
@@ -30,7 +30,7 @@ services:
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
     ports:
-      - "5437:5432"
+      - "5433:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U username -d user-service-db" ]
       interval: 10s
@@ -39,19 +39,19 @@ services:
     volumes:
       - user-service-db-data:/var/lib/postgresql/data
 
-  user-service-redis:
-    image: redis:alpine
-    container_name: User-Service-Redis
-    ports:
-      - "6382:6379"
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    volumes:
-      - user-service-redis-data:/data
+#  user-service-redis:
+#    image: redis:alpine
+#    container_name: User-Service-Redis
+#    ports:
+#      - "6382:6379"
+#    healthcheck:
+#      test: [ "CMD", "redis-cli", "ping" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#    volumes:
+#      - user-service-redis-data:/data
 
 volumes:
   user-service-db-data:
-  user-service-redis-data:
+#  user-service-redis-data:

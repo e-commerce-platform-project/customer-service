@@ -7,7 +7,7 @@ import ru.ivanov.ecommerceplatformproject.userservice.dto.request.UpdateUserRequ
 import java.util.UUID;
 
 public interface UserService {
-    void createUser(UserRegisteredEvent event);
+    void addUser(UserRegisteredEvent event);
 
     UserDto getUser(UUID userId);
 
