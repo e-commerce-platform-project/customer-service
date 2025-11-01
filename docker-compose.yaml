@@ -25,6 +25,7 @@ services:
   user-service-db:
     image: postgres:17-alpine
     container_name: User-Service-DB
+    restart: unless-stopped
     environment:
       POSTGRES_DB: user-service-db
       POSTGRES_USER: username

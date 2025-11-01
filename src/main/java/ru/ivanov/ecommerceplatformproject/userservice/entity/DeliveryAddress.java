@@ -26,14 +26,9 @@ public class DeliveryAddress {
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
-
-    @Column(name = "full_name", nullable = false)
-    private String fullName;
-
-    @Column(name = "phone")
-    private String phone;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "city", nullable = false)
     private String city; //todo можно сделать как отдельную сущность тк городов не много и они будут одинаковыми
@@ -50,10 +45,7 @@ public class DeliveryAddress {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt = Instant.now();
 
-    public DeliveryAddress(UUID userId, String fullName, String phone, String city, String street, String postalCode) {
-        this.userId = userId;
-        this.fullName = fullName;
-        this.phone = phone;
+    public DeliveryAddress(String city, String street, String postalCode) {
         this.city = city;
         this.street = street;
         this.postalCode = postalCode;
