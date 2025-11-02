@@ -9,11 +9,11 @@ import java.util.UUID;
 
 public interface DeliveryAddressService {
 
-    DeliveryAddressDto addDeliveryAddress(UUID userId, AddDeliveryAddressRequest request);
+    UUID addDeliveryAddress(UUID userId, AddDeliveryAddressRequest request);
 
     List<DeliveryAddressDto> getAllUserDeliveryAddress(UUID userId);
 
-    DeliveryAddressDto updateDeliveryAddress(UpdateDeliveryAddressRequest request);
+    DeliveryAddressDto updateDeliveryAddress(UUID deliveryAddressId, UpdateDeliveryAddressRequest request);
 
     void deleteDeliveryAddress(UUID deliveryAddressId);
 }

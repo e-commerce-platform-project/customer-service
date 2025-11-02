@@ -22,10 +22,10 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
     private final DeliveryAddressMapper mapper;
 
     @Override
-    public DeliveryAddressDto addDeliveryAddress(UUID userId, AddDeliveryAddressRequest request) {
+    public UUID addDeliveryAddress(UUID userId, AddDeliveryAddressRequest request) {
         DeliveryAddress address = mapper.toEntity(userId, request);
         DeliveryAddress savedAddress = repository.save(address);
-        return mapper.toDto(savedAddress);
+        return savedAddress.getId();
     }
 
     @Override
@@ -37,11 +37,21 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
 
     @Override
     @Transactional
-    public DeliveryAddressDto updateDeliveryAddress(UpdateDeliveryAddressRequest request) {
-        DeliveryAddress address = repository.findById(request.deliveryAddressId())
+    public DeliveryAddressDto updateDeliveryAddress(UUID deliveryAddressId, UpdateDeliveryAddressRequest request) {
+        DeliveryAddress address = repository.findById(deliveryAddressId)
                 .orElseThrow();//todo исключение и получение с блокировкой
 
-        //update
+        if (request.city() != null) {
+            address.setCity(request.city());
+        }
+
+        if (request.street() != null) {
+            address.setStreet(request.street());
+        }
+
+        if (request.postalCode() != null) {
+            address.setPostalCode(request.postalCode());
+        }
 
         DeliveryAddress updatedAddress = repository.save(address);
         return mapper.toDto(updatedAddress);

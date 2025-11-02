@@ -2,8 +2,9 @@ package ru.ivanov.ecommerceplatformproject.userservice.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.sqm.mutation.internal.temptable.UpdateExecutionDelegate;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import ru.ivanov.ecommerceplatformproject.sharedlibs.dto.DeliveryAddressDto;
 import ru.ivanov.ecommerceplatformproject.sharedlibs.dto.UserDto;
@@ -13,7 +14,6 @@ import ru.ivanov.ecommerceplatformproject.userservice.dto.request.UpdateUserRequ
 import ru.ivanov.ecommerceplatformproject.userservice.service.DeliveryAddressService;
 import ru.ivanov.ecommerceplatformproject.userservice.service.UserService;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,39 +26,39 @@ public class UserRestControllerV1 {
 
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
-    public UserDto getUser() {
-        UUID userId = UUID.fromString("432d382e-836c-41b8-b857-3019956e5d43");
+//    @PreAuthorize("hasRole('USER')")
+    public UserDto getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
         return userService.getUser(userId);
     }
 
     @PatchMapping("/me")
     @ResponseStatus(HttpStatus.OK)
     public UserDto updateUserPatch(
+            @AuthenticationPrincipal Jwt jwt,
             @Valid @RequestBody UpdateUserRequest request
     ) {
-        UUID userId = null; //todo получение из токена
+        UUID userId = UUID.fromString(jwt.getSubject());
         return userService.updateUserPatch(userId, request);
     }
 
     @PostMapping("/me/addresses")
-    @ResponseStatus(HttpStatus.OK)
-    public DeliveryAddressDto addDeliveryAddress(AddDeliveryAddressRequest request) {
-        UUID userId = null; //todo получение из токена
+    @ResponseStatus(HttpStatus.CREATED)
+    public UUID addDeliveryAddress(
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody AddDeliveryAddressRequest request
+    ) {
+        UUID userId = UUID.fromString(jwt.getSubject());
         return deliveryAddressService.addDeliveryAddress(userId, request);
-        //todo location
-    }
-
-    @GetMapping("/me/addresses")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DeliveryAddressDto> getAllUserDeliveryAddresses() {// пока без паинации
-        UUID userId = null; //todo получение из токена
-        return deliveryAddressService.getAllUserDeliveryAddress(userId);
     }
 
     @PatchMapping("/me/addresses/{deliveryAddressId}")
     @ResponseStatus(HttpStatus.OK)
-    public DeliveryAddressDto updateDeliveryAddress(UpdateDeliveryAddressRequest request) {
-        return deliveryAddressService.updateDeliveryAddress(request);
+    public DeliveryAddressDto updateDeliveryAddress(
+            @PathVariable("deliveryAddressId") UUID deliveryAddressId,
+            @Valid @RequestBody UpdateDeliveryAddressRequest request
+    ) {
+        return deliveryAddressService.updateDeliveryAddress(deliveryAddressId, request);
     }
 
     @DeleteMapping("/me/addresses/{deliveryAddressId}")
