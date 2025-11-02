@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -13,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-//@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Getter
 @Setter
 @Entity
